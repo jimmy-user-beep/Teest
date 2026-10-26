@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xanh xanh &amp; Hồng hồng · Voice</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ee; --ink:#2a2a2a; --card:#fff; --line:#0000001a; --pill:#f0f0f0;
+  --xanh:#bfe9d2; --xanh-d:#1f6b45; --hong:#f9c9dc; --hong-d:#a1295b; --red:#e53935;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Be Vietnam Pro",system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;justify-content:center}
+.app{width:min(100%,560px);height:100dvh;display:flex;flex-direction:column;background:var(--card);box-shadow:0 0 0 1px var(--line)}
+header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+h1{margin:0;font-size:18px;font-weight:700}
+#reset{font-size:12.5px;opacity:.65;font-variant-numeric:tabular-nums;text-align:right}
+#list{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.empty{margin:auto;opacity:.5;font-size:14px;text-align:center;padding:0 20px}
+.row{display:flex;flex-direction:column;max-width:84%}
+.row.xanh{align-self:flex-start;align-items:flex-start}
+.row.hong{align-self:flex-end;align-items:flex-end}
+.who{font-size:12px;font-weight:600;margin:0 6px 3px}
+.xanh .who{color:var(--xanh-d)} .hong .who{color:var(--hong-d)}
+.bubble{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:22px;min-width:230px}
+.xanh .bubble{background:var(--xanh);color:var(--xanh-d);border-bottom-left-radius:6px}
+.hong .bubble{background:var(--hong);color:var(--hong-d);border-bottom-right-radius:6px}
+.play{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:currentColor;cursor:pointer;position:relative}
+.play::after{content:"";position:absolute;left:14px;top:10px;border-left:12px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent}
+.play.on::after{left:11px;top:11px;width:14px;height:14px;border:0;border-left:4px solid #fff;border-right:4px solid #fff}
+.wave{flex:1;height:28px;display:flex;align-items:center;gap:2px}
+.wave i{flex:1;min-width:2px;border-radius:2px;background:currentColor;opacity:.35}
+.wave i.p{opacity:1}
+.dur{font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;min-width:32px;text-align:right}
+.time{font-size:11px;opacity:.5;margin:3px 6px 0}
+#status{min-height:18px;padding:0 16px 4px;font-size:12.5px;color:#b3261e}
+
+#bar{display:flex;align-items:center;gap:8px;padding:8px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+#main{flex:1;min-width:0;height:48px;display:flex;align-items:center;gap:8px;background:var(--pill);border-radius:24px;padding:0 6px 0 16px}
+.hint{flex:1;font-size:14px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick{display:flex;background:#fff;border-radius:18px;padding:3px;gap:2px;flex:none}
+.pick button{font:inherit;font-size:13px;font-weight:600;border:0;border-radius:15px;padding:6px 11px;background:transparent;color:#777;cursor:pointer}
+.pick button[aria-pressed=true].xanh{background:var(--xanh);color:var(--xanh-d)}
+.pick button[aria-pressed=true].hong{background:var(--hong);color:var(--hong-d)}
+#recui{flex:1;min-width:0;display:flex;align-items:center;gap:8px}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--red);animation:pulse 1s ease-in-out infinite}
+#timer{flex:none;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;min-width:34px}
+#bars{flex:1;min-width:0;height:30px;display:flex;align-items:center;gap:2px;overflow:hidden;justify-content:flex-end}
+#bars i{flex:none;width:3px;border-radius:2px;background:var(--c)}
+#slide{flex:none;font-size:12.5px;color:#777;transition:transform .1s}
+#slide.arm{color:var(--red);font-weight:700}
+.circ{flex:none;width:48px;height:48px;border-radius:50%;border:0;display:grid;place-items:center;color:#fff;background:var(--c,#1f6b45);cursor:pointer}
+.circ svg{width:24px;height:24px}
+#mic{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .15s}
+#mic.hold{transform:scale(1.25);background:var(--red)}
+#trash{width:36px;height:36px;background:transparent;color:var(--red)}
+#trash svg{width:22px;height:22px}
+[hidden]{display:none!important}
+@keyframes pulse{50%{opacity:.3}}
+button:focus-visible{outline:2px solid #333;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}#mic{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Xanh xanh &amp; Hồng hồng</h1>
+    <div id="reset"></div>
+  </header>
+  <div id="list"></div>
+  <div id="status" role="status"></div>
+  <div id="bar">
+    <div id="main">
+      <div id="idle" style="display:contents">
+        <div class="hint">Giữ nút micro để ghi âm</div>
+        <div class="pick" role="group" aria-label="Chọn nhân vật">
+          <button type="button" class="xanh" data-who="xanh" aria-pressed="true">Xanh xanh</button>
+          <button type="button" class="hong" data-who="hong" aria-pressed="false">Hồng hồng</button>
+        </div>
+      </div>
+      <div id="recui" hidden>
+        <button type="button" class="circ" id="trash" aria-label="Hủy ghi âm" hidden><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6l1 1h4v2H4V4h4l1-1zM6 8h12l-1 13H7L6 8z"/></svg></button>
+        <i class="dot"></i><span id="timer">0:00</span>
+        <div id="bars"></div>
+        <span id="slide">‹ Trượt sang trái để hủy</span>
+      </div>
+    </div>
+    <button type="button" class="circ" id="mic" aria-label="Giữ để ghi âm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1A7 7 0 0 0 19 12h-2z"/></svg></button>
+    <button type="button" class="circ" id="sendbtn" aria-label="Gửi" hidden><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+  </div>
+</div>
+
+<script type="module">
+/* ===== CẤU HÌNH FIREBASE =====
+   Dán config vào đây để mọi người cùng nghe chung một đoạn chat.
+   Để trống apiKey = chế độ demo (chỉ lưu trên trình duyệt của bạn). */
+const FIREBASE_CONFIG = { apiKey:"", authDomain:"", projectId:"", appId:"" };
+
+const NAMES = { xanh:"Xanh xanh", hong:"Hồng hồng" };
+const MAX_SEC = 30, MAX_B64 = 300000, BARS = 32;
+const TZ = 7 * 36e5, DAY = 864e5;                 // giờ Việt Nam (UTC+7)
+const dayKey = () => new Date(Date.now() + TZ).toISOString().slice(0, 10);
+const msToMidnight = () => DAY - ((Date.now() + TZ) % DAY);
+const $ = id => document.getElementById(id);
+const status = t => $("status").textContent = t || "";
+const mmss = s => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+
+/* ===== LƯU TRỮ ===== */
+async function createStore(){
+  if(FIREBASE_CONFIG.apiKey){
+    const base = "https://www.gstatic.com/firebasejs/10.12.2/";
+    const { initializeApp } = await import(base + "firebase-app.js");
+    const fs = await import(base + "firebase-firestore.js");
+    const col = fs.collection(fs.getFirestore(initializeApp(FIREBASE_CONFIG)), "voice");
+    return {
+      add: m => fs.addDoc(col, { ...m, expireAt: fs.Timestamp.fromMillis(m.expireMs) }),
+      subscribe: (day, cb) => fs.onSnapshot(fs.query(col, fs.where("day", "==", day)),
+        s => cb(s.docs.map(d => ({ id:d.id, ...d.data() }))), e => status("Lỗi database: " + e.code))
+    };
+  }
+  const KEY = "voice-xanh-hong", subs = new Set();
+  const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+  const emit = () => subs.forEach(f => f());
+  addEventListener("storage", e => e.key === KEY && emit());
+  return {
+    add: async m => { const l = read().filter(x => x.day === m.day); l.push({ id:crypto.randomUUID(), ...m });
+                      localStorage.setItem(KEY, JSON.stringify(l)); emit(); },
+    subscribe(day, cb){ const f = () => cb(read().filter(x => x.day === day)); subs.add(f); f(); return () => subs.delete(f); }
+  };
+}
+
+/* ===== CHỌN NHÂN VẬT ===== */
+let who = "xanh";
+try { if(localStorage.getItem("voice-who") === "hong") who = "hong"; } catch {}
+function applyWho(){
+  document.querySelectorAll(".pick button").forEach(b => b.setAttribute("aria-pressed", b.dataset.who === who));
+  const c = who === "xanh" ? "#1f6b45" : "#a1295b";
+  $("mic").style.setProperty("--c", c); $("sendbtn").style.setProperty("--c", c); $("bar").style.setProperty("--c", c);
+}
+document.querySelectorAll(".pick button").forEach(b => b.onclick = () => {
+  who = b.dataset.who; try { localStorage.setItem("voice-who", who); } catch {} applyWho();
+});
+applyWho();
+
+/* ===== HIỂN THỊ TIN VOICE ===== */
+const list = $("list"), nodes = new Map();
+let playing = null;
+
+function makeRow(m){
+  const k = m.who === "hong" ? "hong" : "xanh";
+  const row = document.createElement("div"); row.className = "row " + k;
+  const w = document.createElement("div"); w.className = "who"; w.textContent = NAMES[k];
+  const b = document.createElement("div"); b.className = "bubble";
+  const btn = document.createElement("button"); btn.className = "play"; btn.type = "button"; btn.setAttribute("aria-label", "Nghe tin nhắn");
+  const wave = document.createElement("div"); wave.className = "wave";
+  const peaks = Array.isArray(m.wave) && m.wave.length ? m.wave : Array.from({ length:BARS }, (_, i) => 30 + 25 * Math.abs(Math.sin(i * 1.3)));
+  const bars = peaks.map(v => { const i = document.createElement("i"); i.style.height = Math.max(14, Math.min(100, v)) + "%"; wave.append(i); return i; });
+  const dur = document.createElement("div"); dur.className = "dur"; dur.textContent = mmss(m.dur || 0);
+  b.append(btn, wave, dur);
+  const t = document.createElement("div"); t.className = "time";
+  t.textContent = new Date(m.createdAt).toLocaleTimeString("vi-VN", { hour:"2-digit", minute:"2-digit", timeZone:"Asia/Ho_Chi_Minh" });
+  row.append(w, b, t);
+
+  let audio = null;
+  const paint = n => bars.forEach((x, i) => x.classList.toggle("p", i < n));
+  const reset = () => { btn.classList.remove("on"); paint(0); dur.textContent = mmss(m.dur || 0); };
+  btn.onclick = () => {
+    if(playing && playing.audio !== audio){ playing.audio.pause(); playing.reset(); playing = null; }
+    if(!audio){
+      audio = new Audio(m.audio);
+      audio.ontimeupdate = () => { paint(Math.round(Math.min(1, audio.currentTime / (m.dur || audio.duration || 1)) * bars.length)); dur.textContent = mmss(audio.currentTime); };
+      audio.onended = () => { reset(); playing = null; };
+    }
+    if(audio.paused){ audio.play().catch(() => status("Không phát được âm thanh.")); btn.classList.add("on"); playing = { audio, reset }; }
+    else { audio.pause(); btn.classList.remove("on"); }
+  };
+  return row;
+}
+
+function render(msgs){
+  const nearEnd = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+  const ids = new Set(msgs.map(m => m.id));
+  nodes.forEach((n, id) => { if(!ids.has(id)){ n.remove(); nodes.delete(id); } });
+  msgs.sort((a, b) => a.createdAt - b.createdAt).forEach(m => {
+    if(!nodes.has(m.id)) nodes.set(m.id, makeRow(m));
+    list.append(nodes.get(m.id));
+  });
+  let e = list.querySelector(".empty");
+  if(!msgs.length && !e){ e = document.createElement("div"); e.className = "empty"; e.textContent = "Chưa có tin nhắn hôm nay. Giữ nút micro để gửi tin đầu tiên!"; list.append(e); }
+  if(msgs.length && e) e.remove();
+  if(nearEnd) list.scrollTop = list.scrollHeight;
+}
+
+/* ===== GHI ÂM KIỂU MESSENGER =====
+   - Giữ nút micro: ghi âm; thả tay: gửi; trượt sang trái rồi thả: hủy.
+   - Chạm nhanh vào micro: ghi âm rảnh tay, có nút thùng rác (hủy) và nút gửi. */
+let rec = null, stream = null, actx = null, an = null, chunks = [], peaks = [], live = [];
+let t0 = 0, tick = 0, mode = "idle", starting = false, pressing = false, armed = false;
+let downT = 0, startX = 0, sendAfter = false, store;
+
+function setUI(m){
+  mode = m;
+  const rc = m !== "idle";
+  $("idle").hidden = rc; $("recui").hidden = !rc;
+  $("mic").hidden = m === "locked"; $("sendbtn").hidden = m !== "locked";
+  $("trash").hidden = m !== "locked"; $("slide").hidden = m !== "hold";
+  $("mic").classList.toggle("hold", m === "hold");
+  $("main").style.paddingLeft = m === "locked" ? "6px" : "16px";
+  if(!rc){ armed = false; $("bars").replaceChildren(); $("timer").textContent = "0:00"; }
+}
+
+function level(){
+  const d = new Uint8Array(an.fftSize); an.getByteTimeDomainData(d);
+  let s = 0; for(const v of d) s += ((v - 128) / 128) ** 2;
+  return Math.min(1, Math.sqrt(s / d.length) * 3.5);
+}
+
+async function start(){
+  status(); starting = true;
+  if(!navigator.mediaDevices || !window.MediaRecorder){ starting = false; return status("Trình duyệt này chưa hỗ trợ ghi âm."); }
+  try{ stream = await navigator.mediaDevices.getUserMedia({ audio:true }); }
+  catch{ starting = false; return status("Chưa có quyền dùng micro. Hãy cho phép micro cho trang này rồi thử lại."); }
+  const mime = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm", "audio/ogg;codecs=opus"].find(t => MediaRecorder.isTypeSupported(t));
+  rec = new MediaRecorder(stream, { ...(mime ? { mimeType:mime } : {}), audioBitsPerSecond:24000 });
+  chunks = []; peaks = []; live = []; sendAfter = false;
+  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  rec.onstop = finish;
+  try{ actx = new (window.AudioContext || window.webkitAudioContext)(); an = actx.createAnalyser(); an.fftSize = 512;
+       actx.createMediaStreamSource(stream).connect(an); }catch{ an = null; }
+  rec.start(); t0 = Date.now(); navigator.vibrate && navigator.vibrate(15);
+  // Nếu tay đã thả (hoặc có hộp thoại xin quyền làm mất thao tác giữ) thì chuyển sang chế độ khóa
+  setUI(pressing && Date.now() - downT < 1200 ? "hold" : "locked");
+  starting = false;
+  tick = setInterval(() => {
+    const s = (Date.now() - t0) / 1000;
+    $("timer").textContent = mmss(s);
+    const v = an ? level() : 0.2; peaks.push(v); live.push(v);
+    const box = $("bars"), max = Math.max(8, Math.floor(box.clientWidth / 5));
+    live = live.slice(-max);
+    box.replaceChildren(...live.map(x => { const i = document.createElement("i"); i.style.height = Math.max(12, x * 100) + "%"; return i; }));
+    if(s >= MAX_SEC) end(true);
+  }, 80);
+}
+
+function end(send){
+  if(!rec) return;
+  sendAfter = send; clearInterval(tick);
+  if(rec.state !== "inactive") rec.stop();
+}
+
+async function finish(){
+  stream.getTracks().forEach(t => t.stop());
+  actx && actx.close().catch(() => {});
+  const dur = (Date.now() - t0) / 1000, mime = rec.mimeType, send = sendAfter, p = peaks.slice();
+  rec = null; setUI("idle");
+  if(!send) return;
+  if(dur < 0.7) return status("Tin quá ngắn. Hãy giữ nút micro lâu hơn một chút.");
+  const wave = Array.from({ length:BARS }, (_, i) => {
+    const a = Math.floor(i * p.length / BARS), z = Math.max(a + 1, Math.floor((i + 1) * p.length / BARS));
+    return Math.round(Math.max(...p.slice(a, z), 0) * 100);
+  });
+  status("Đang gửi…"); $("mic").disabled = true; $("sendbtn").disabled = true;
+  try{
+    const audio = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(new Blob(chunks, { type:mime })); });
+    if(audio.length > MAX_B64) throw new Error("Tin quá nặng, hãy ghi ngắn hơn.");
+    await store.add({ audio, wave, dur:+Math.min(dur, MAX_SEC).toFixed(1), who, day:dayKey(), createdAt:Date.now(), expireMs:Date.now() + 2 * DAY });
+    status();
+  }catch(err){ status("Gửi thất bại: " + (err.code || err.message)); }
+  $("mic").disabled = false; $("sendbtn").disabled = false;
+}
+
+$("mic").addEventListener("pointerdown", e => {
+  e.preventDefault();
+  if(rec || starting) return;
+  pressing = true; downT = Date.now(); startX = e.clientX; start();
+});
+addEventListener("pointermove", e => {
+  if(mode !== "hold") return;
+  const dx = e.clientX - startX;
+  armed = dx < -70;
+  const s = $("slide"); s.classList.toggle("arm", armed);
+  s.textContent = armed ? "Thả để hủy" : "‹ Trượt sang trái để hủy";
+  s.style.transform = `translateX(${Math.max(-40, Math.min(0, dx / 2))}px)`;
+});
+function release(cancel){
+  if(!pressing) return;
+  pressing = false;
+  if(mode !== "hold") return;                        // chưa bắt đầu ghi: start() tự chọn chế độ
+  if(cancel || armed) return end(false);
+  if(Date.now() - downT < 350){ setUI("locked"); return; }   // chạm nhanh → ghi âm rảnh tay
+  end(true);
+}
+addEventListener("pointerup", () => release(false));
+addEventListener("pointercancel", () => release(true));
+$("mic").addEventListener("contextmenu", e => e.preventDefault());
+$("trash").onclick = () => end(false);
+$("sendbtn").onclick = () => end(true);
+
+/* ===== KHỞI ĐỘNG + RESET 00H ===== */
+store = await createStore();
+let curDay = dayKey(), unsub = store.subscribe(curDay, m => { render(m); list.scrollTop = list.scrollHeight; });
+
+setInterval(() => {
+  const left = msToMidnight(), p = n => String(n).padStart(2, "0");
+  $("reset").textContent = "Xóa lúc 00:00 · còn " + p(left / 36e5 | 0) + ":" + p(left % 36e5 / 6e4 | 0) + ":" + p(left % 6e4 / 1e3 | 0);
+  if(dayKey() !== curDay){
+    unsub(); curDay = dayKey();
+    if(playing){ playing.audio.pause(); playing = null; }
+    unsub = store.subscribe(curDay, render);
+  }
+}, 1000);
+</script>
+</body>
+</html>
